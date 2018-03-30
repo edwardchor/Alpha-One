@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch.nn.functional import Variable
 from scipy import misc
 import math
+import torch.nn.functional as F
 
 from torchvision.models.resnet import ResNet
 from torchvision.models.resnet import BasicBlock
@@ -103,21 +104,30 @@ class AlphaBlock(nn.Module):
 
 
 class AlphaNet(ResNet):
-    def __init__(self, block, layers, num_classes=1000):
-        outputShift=4
+    def __init__(self, game,args):
+        block=AlphaBlock
+        layers=[2,2,2,2]
+        self.board_x, self.board_y = game.getBoardSize()
+        self.action_size = game.getActionSize()
+        self.args = args
+        outputShift=1
         self.inplanes = 64
+
         super(ResNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
+
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=5, stride=1, padding=2,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.maxpool = nn.MaxPool2d(kernel_size=5, stride=1, padding=2)
+
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        # self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        self.avgpool = nn.AvgPool2d(7, stride=1)
-        self.fc = nn.Linear(256 * block.expansion*outputShift, num_classes)
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+        self.avgpool = nn.AvgPool2d(5, stride=1)
+        self.fc_p= nn.Linear(512 * block.expansion*outputShift,self.action_size)
+        self.fc_v=nn.Linear(512i* block.expansion*outputShift,1)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -146,110 +156,35 @@ class AlphaNet(ResNet):
 
 
     def forward(self, x):
-        x=x.view(1,1,x.shape[0],x.shape[1])
-        print("view output:{}".format(x.shape))
+        # print("input x shape:{}".format(x.shape))
+        x= x.view(-1, 1, self.board_x, self.board_y)
+        # x=x.view(1,*x.shape)
+
+        # print("view output:{}".format(x.shape))
+
         x = self.conv1(x)
-        print("conv1 output:{}".format(x.shape))
+        # print("conv1 output:{}".format(x.shape))
         x = self.bn1(x)
-        print("bn1 output:{}".format(x.shape))
+        # print("bn1 output:{}".format(x.shape))
         x = self.relu(x)
-        print("relu output:{}".format(x.shape))
+        # print("relu output:{}".format(x.shape))
         x = self.maxpool(x)
-        print("maxpool output:{}".format(x.shape))
+        # print("maxpool output:{}".format(x.shape))
 
         x = self.layer1(x)
-        print("layer1 output:{}".format(x.shape))
+        # print("layer1 output:{}".format(x.shape))
         x = self.layer2(x)
-        print("layer2 output:{}".format(x.shape))
+        # print("layer2 output:{}".format(x.shape))
         x = self.layer3(x)
-        print("layer3 output:{}".format(x.shape))
-        # x = self.layer4(x)
+        # print("layer3 output:{}".format(x.shape))
+        x = self.layer4(x)
         # print("layer4 output:{}".format(x.shape))
 
         # x = self.avgpool(x)
         # print("avgpool output:{}".format(x.shape))
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
-        print("fc output:{}".format(x.shape))
-        return x
-
-
-
-def resnet14():
-    model=AlphaNet(AlphaBlock,[2,2,2],2)
-    return model
-
-def resnet18(pretrained=False, **kwargs):
-    """Constructs a ResNet-18 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(AlphaBlock, [2, 2, 2, 2], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
-    return model
-
-
-def resnet34(pretrained=False, **kwargs):
-    """Constructs a ResNet-34 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(AlphaBottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
-    return model
-
-
-def resnet50(pretrained=False, **kwargs):
-    """Constructs a ResNet-50 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(AlphaBottleneck, [3, 4, 6, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet50']))
-    return model
-
-
-def resnet101(pretrained=False, **kwargs):
-    """Constructs a ResNet-101 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(AlphaBottleneck, [3, 4, 23, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet101']))
-    return model
-
-
-def resnet152(pretrained=False, **kwargs):
-    """Constructs a ResNet-152 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = ResNet(AlphaBottleneck, [3, 8, 36, 3], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['resnet152']))
-    return model
-
-
-
-if __name__ == '__main__':
-
-    def rgb2gray(rgb):
-        if len(rgb.shape)<=2:
-            return rgb
-        return np.dot(rgb[...,:3], [0.299, 0.587, 0.114])
-
-    net=resnet14()
-
-
-    ipt=Variable(torch.FloatTensor(np.random.random(size=(19,19))))
-
-    r=net(ipt)
+        p = self.fc_p(x)
+        # print("p output:{}".format(p.shape))
+        v = self.fc_v(x)
+        # print("v output:{}".format(p.shape))
+        return F.log_softmax(p,dim=1),F.tanh(v)
