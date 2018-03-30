@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-alpha-zero-general/
 # C extensions
 *.so
 
