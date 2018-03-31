@@ -53,6 +53,7 @@ class GoGame(Game):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
         winner = 0
+
         if len(board.history) > 1:
             if board.history[-1] is None and board.history[-2] is None\
                     and player == -1:
