@@ -127,7 +127,7 @@ class Board():
         (x, y) = position
         return filter(self._on_board, [(x - 1, y - 1), (x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1)])
 
-    def _update_neighbors(self, position, color):
+    def _update_neighbors(self, color, position):
 
         """A private helper function to update self.group_sets and self.liberty_sets
         given that a stone was just played at `position`
@@ -488,7 +488,7 @@ class Board():
         """Perform the given move on the board; flips pieces as necessary.
         color gives the color pf the piece to play (-1=white,1=black)
         """
-        if self.is_legal(action,color):
+        if self.is_legal(action):
             # reset ko
             self.ko = None
             # increment age of stones by 1

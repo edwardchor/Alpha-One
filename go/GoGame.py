@@ -53,23 +53,21 @@ class GoGame(Game):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
         winner = 0
-        b=Board(self.n)
-        b.pieces=np.copy(board)
-        if len(b.history) > 1:
-            if b.history[-1] is None and b.history[-2] is None\
+        if len(board.history) > 1:
+            if board.history[-1] is None and board.history[-2] is None\
                     and player == -1:
                 score_white = np.sum(board == -1)
                 score_black = np.sum(board == 1)
                 empties = zip(*np.where(board == 0))
                 for empty in empties:
                     # Check that all surrounding points are of one color
-                    if b.is_eyeish(empty, 1):
+                    if board.is_eyeish(empty, 1):
                         score_black += 1
-                    elif b.is_eyeish(empty, -1):
+                    elif board.is_eyeish(empty, -1):
                         score_white += 1
-                score_white += b.komi
-                score_white -= b.passes_white
-                score_black -= b.passes_black
+                score_white += board.komi
+                score_white -= board.passes_white
+                score_black -= board.passes_black
                 if score_black > score_white:
                     winner = 1
                 elif score_white > score_black:
@@ -101,7 +99,7 @@ class GoGame(Game):
         return l
 
     def stringRepresentation(self, board):
-
+        # 8x8 numpy array (canonical board)
         return board.tostring()
 
 

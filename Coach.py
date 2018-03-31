@@ -42,7 +42,7 @@ class Coach():
         board = self.game.getInitBoard()
         self.curPlayer = 1
         episodeStep = 0
-        print('inside another epsidode')
+        # print('inside another epsidode')
         while True:
             episodeStep += 1
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
