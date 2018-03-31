@@ -127,7 +127,7 @@ class AlphaNet(ResNet):
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
         self.avgpool = nn.AvgPool2d(5, stride=1)
         self.fc_p= nn.Linear(512 * block.expansion*outputShift,self.action_size)
-        self.fc_v=nn.Linear(512i* block.expansion*outputShift,1)
+        self.fc_v=nn.Linear(512* block.expansion*outputShift,1)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
