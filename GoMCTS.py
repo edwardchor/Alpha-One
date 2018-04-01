@@ -122,7 +122,6 @@ class MCTS():
                     best_act = a
 
         a = best_act
-
         # print("in MCTS.search, need next search, shifting player from 1")
         next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
         # print("in MCTS.search, need next search, next player is {}".format(next_player))

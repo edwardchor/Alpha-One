@@ -45,22 +45,24 @@ class Coach():
         while True:
 
             episodeStep += 1
-            print("================{}=====CURPLAYER:{}==========".format(episodeStep,"W" if self.curPlayer==-1 else "b"))
+            print("================Episode step:{}=====CURPLAYER:{}==========".format(episodeStep,"W" if self.curPlayer==-1 else "b"))
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
             temp = int(episodeStep < self.args.tempThreshold)
-
-            pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
             print("CANON:")
             display(canonicalBoard)
+
+            pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
 
             sym = self.game.getSymmetries(canonicalBoard, pi)
             for b,p in sym:
                 trainExamples.append([b, self.curPlayer, p, None])
             action = np.random.choice(len(pi), p=pi)
+            print("BOARD Before:")
+            display(board)
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
             print("BOARD updated:")
             display(board)
-            r = self.game.getGameEnded(board, self.curPlayer)
+            r = self.game.getGameEnded(board.copy(), self.curPlayer)
             if r!=0:
                 return [(x[0],x[2],r*((-1)**(x[1]!=self.curPlayer))) for x in trainExamples]
 
@@ -79,12 +81,12 @@ class Coach():
             # examples of the iteration
             if not self.skipFirstSelfPlay or i>1:
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
-
                 eps_time = AverageMeter()
                 bar = Bar('Self Play', max=self.args.numEps)
                 end = time.time()
 
                 for eps in range(self.args.numEps):
+                    print("{}th Episode:".format(eps+1))
                     self.mcts = MCTS(self.game, self.nnet, self.args)   # reset search tree
                     iterationTrainExamples += self.executeEpisode()
 

@@ -27,9 +27,11 @@ class GoGame(Game):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
         # print("getting next state from perspect of player {} with action {}".format(player,action))
-        if action == self.n * self.n:
-            return (board, -player)
+
         b = board.copy()
+        if action == self.n * self.n:
+            return (b, -player)
+
         move = (int(action / self.n), action % self.n)
         # display(b)
         # print(player,move)
@@ -50,7 +52,7 @@ class GoGame(Game):
             return np.array(valids)
         for x, y in legalMoves:
             valids[self.n * x + y] = 1
-        # display(board)
+        # display(b)
         # print(legalMoves)
         return np.array(valids)
 
@@ -58,6 +60,7 @@ class GoGame(Game):
     def getGameEnded(self, board, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
+
         winner = 0
         if len(board.history) > 1:
             if board.history[-1] is None and board.history[-2] is None\
@@ -85,12 +88,13 @@ class GoGame(Game):
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-        cur_pieces = board.pieces.copy()
-        b_pieces = cur_pieces * player
-        board.pieces = b_pieces
+        canonicalBoard=board.copy()
+
+        canonicalBoard.pieces= board.pieces* player
+
         # print('getting canon:')
         # print(b_pieces)
-        return board
+        return canonicalBoard
 
     # modified
     def getSymmetries(self, board, pi):
@@ -111,7 +115,7 @@ class GoGame(Game):
 
     def stringRepresentation(self, board):
         # 8x8 numpy array (canonical board)
-        return np.array(board.pieces).tostring()
+        return np.array2string(np.array(board.pieces))
 
 
 def display(board):
