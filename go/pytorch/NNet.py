@@ -121,8 +121,9 @@ class NNetWrapper(NeuralNet):
         start = time.time()
 
         # preparing input
-        board = torch.FloatTensor(np.array(board.pieces).astype(np.float64))
+        board = torch.FloatTensor(board.astype(np.float64))
         if args.cuda: board = board.contiguous().cuda()
+        # print(board)
         board = Variable(board,requires_grad=False)
         board = board.view(1, self.board_x, self.board_y)
 
@@ -130,7 +131,7 @@ class NNetWrapper(NeuralNet):
 
         pi, v = self.nnet(board)
 
-        print('PREDICTION TIME TAKEN : {0:03f}'.format(time.time()-start))
+        # print('PREDICTION TIME TAKEN : {0:03f}'.format(time.time()-start))
         return torch.exp(pi).data.cpu().numpy()[0], v.data.cpu().numpy()[0]
 
     def loss_pi(self, targets, outputs):

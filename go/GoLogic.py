@@ -10,7 +10,6 @@ BLACK = +1
 EMPTY = 0
 PASS_MOVE = None
 
-
 class Board():
     # Looking up positions adjacent to a given position takes a surprising
     # amount of time, hence this shared lookup table {boardsize: {position: [neighbors]}}
@@ -19,9 +18,7 @@ class Board():
     def __init__(self, n):
         self.n = n
         # Create the empty board array.
-        self.pieces = [None]*self.n
-        for i in range(self.n):
-            self.pieces[i] = [0]*self.n
+        self.pieces = np.zeros((self.n,self.n))
 
         self.ko = None
         self.komi = 7.5
@@ -127,7 +124,7 @@ class Board():
         (x, y) = position
         return filter(self._on_board, [(x - 1, y - 1), (x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1)])
 
-    def _update_neighbors(self, color, position):
+    def _update_neighbors(self, position, color):
 
         """A private helper function to update self.group_sets and self.liberty_sets
         given that a stone was just played at `position`
@@ -143,14 +140,14 @@ class Board():
             self.liberty_sets[nx][ny] -= set([position])
             # if neighbor was opponent, update group's liberties count
             # (current_player's groups will be updated below regardless)
-            if self[nx][ny] == -color:
+            if self.pieces[nx][ny] == -color:
                 new_liberty_count = len(self.liberty_sets[nx][ny])
                 for (gx, gy) in self.group_sets[nx][ny]:
                     self.liberty_counts[gx][gy] = new_liberty_count
             # MERGE group/liberty sets if neighbor is the same color
             # note: this automatically takes care of merging two separate
             # groups that just became connected through (x,y)
-            elif self[x][y] == self[nx][ny]:
+            elif self.pieces[x][y] == self.pieces[nx][ny]:
                 merged_group |= self.group_sets[nx][ny]
                 merged_libs |= self.liberty_sets[nx][ny]
 
@@ -173,8 +170,8 @@ class Board():
         updating group sets and liberties along the way
         """
         for (x, y) in group:
-            self._update_hash((x, y), self[x][y])
-            self[x][y] = EMPTY
+            self._update_hash((x, y), self.pieces[x, y])
+            self.pieces[x, y] = EMPTY
         for (x, y) in group:
             # clear group_sets for all positions in 'group'
             self.group_sets[x][y] = set()
@@ -182,7 +179,7 @@ class Board():
             self.liberty_counts[x][y] = -1
             self.stone_ages[x][y] = -1
             for (nx, ny) in self._neighbors((x, y)):
-                if self[nx][ny] == EMPTY:
+                if self.pieces[nx, ny] == EMPTY:
                     # add empty neighbors of (x,y) to its liberties
                     self.liberty_sets[x][y].add((nx, ny))
                 else:
@@ -234,12 +231,12 @@ class Board():
             for (nx, ny) in self._neighbors(action):
                 # check if we're saved by attaching to a friendly group that has
                 # liberties elsewhere
-                is_friendly_group = self[nx][ny] == color
+                is_friendly_group = self.pieces[nx, ny] == color
                 group_has_other_liberties = len(self.liberty_sets[nx][ny] - set([action])) > 0
                 if is_friendly_group and group_has_other_liberties:
                     return False
                 # check if we're killing an unfriendly group
-                is_enemy_group = self[nx][ny] == -color
+                is_enemy_group = self.pieces[nx, ny] == -color
                 if is_enemy_group and (not group_has_other_liberties):
                     return False
             # checked all the neighbors, and it doesn't look good.
@@ -279,7 +276,7 @@ class Board():
         (x, y) = action
         if not self._on_board(action):
             return False
-        if self[x][y] != EMPTY:
+        if self.pieces[x][y] != EMPTY:
             return False
         if self.is_suicide(action, color):
             return False
@@ -293,11 +290,11 @@ class Board():
         """returns whether the position is empty and is surrounded by all stones of 'owner'
         """
         (x, y) = position
-        if self[x][y] != EMPTY:
+        if self.pieces[x, y] != EMPTY:
             return False
 
         for (nx, ny) in self._neighbors(position):
-            if self[nx][ny] != owner:
+            if self.pieces[nx][ny] != owner:
                 return False
         return True
 
@@ -360,7 +357,7 @@ class Board():
             # have 2 liberties
             neighbor_groups_stones = [next(iter(group)) for group in self.get_groups_around(action)]
             potential_prey = [(nx, ny) for (nx, ny) in neighbor_groups_stones
-                              if (self[nx][ny] == prey_player and
+                              if (self.pieces[nx][ny] == prey_player and
                                   self.liberty_counts[nx][ny] == 2)]
         else:
             # we are checking a specific group (called from is_ladder_escape)
@@ -380,7 +377,7 @@ class Board():
             # are in atari.  Capturing these groups are potential escapes.
             for prey_stone in tmp.group_sets[prey_x][prey_y]:
                 for (nx, ny) in tmp._neighbors(prey_stone):
-                    if (tmp[nx][ny] == hunter_player) and (tmp.liberty_counts[nx][ny] == 1):
+                    if (tmp.pieces[nx][ny] == hunter_player) and (tmp.liberty_counts[nx][ny] == 1):
                         possible_escapes |= tmp.liberty_sets[nx][ny]
 
             if not any(tmp.is_ladder_escape((escape_x, escape_y), color, prey=(prey_x, prey_y),
@@ -421,7 +418,7 @@ class Board():
             # ladder (i.e., with one liberty)
             neighbor_groups_stones = [next(iter(group)) for group in self.get_groups_around(action)]
             potential_prey = [(nx, ny) for (nx, ny) in neighbor_groups_stones
-                              if (self[nx][ny] == prey_player and
+                              if (self.pieces[nx][ny] == prey_player and
                                   self.liberty_counts[nx][ny] == 1)]
         else:
             # we are checking a specific group (called from is_ladder_capture)
@@ -488,21 +485,22 @@ class Board():
         """Perform the given move on the board; flips pieces as necessary.
         color gives the color pf the piece to play (-1=white,1=black)
         """
-        if self.is_legal(action):
+        if self.is_legal(action,color):
             # reset ko
             self.ko = None
             # increment age of stones by 1
             self.stone_ages[self.stone_ages >= 0] += 1
             if action is not PASS_MOVE:
                 (x, y) = action
-                self[x][y] = color
+                self.pieces[x][y] = color
                 self._update_hash(action, color)
                 self._update_neighbors(action, color)
                 self.stone_ages[x][y] = 0
+                print("player {} act {} --:".format(color,action))
 
                 # check neighboring groups' liberties for captures
                 for (nx, ny) in self._neighbors(action):
-                    if self[nx][ny] == -color and len(self.liberty_sets[nx][ny]) == 0:
+                    if self.pieces[nx][ny] == -color and len(self.liberty_sets[nx][ny]) == 0:
                         # capture occurred!
                         captured_group = self.group_sets[nx][ny]
                         num_captured = len(captured_group)
@@ -529,9 +527,8 @@ class Board():
                 if color == WHITE:
                     self.passes_white += 1
         else:
-            raise IllegalMove(str(action))
+            raise IllegalMove(str(action)+','+str(color))
 
 
 class IllegalMove(Exception):
     pass
-

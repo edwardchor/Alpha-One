@@ -1,4 +1,4 @@
-from Coach import Coach
+from GoCoach import Coach
 from go.GoGame import GoGame as Game
 from go.pytorch.NNet import NNetWrapper as nn
 from utils import *

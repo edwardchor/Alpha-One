@@ -13,7 +13,7 @@ class GoGame(Game):
     def getInitBoard(self):
         # return initial board (numpy board)
         b = Board(self.n)
-        return np.array(b.pieces)
+        return b
 
     def getBoardSize(self):
         # (a,b) tuple
@@ -26,26 +26,31 @@ class GoGame(Game):
     def getNextState(self, board, player, action):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
+        print("getting next state from perspect of player {} with action {}".format(player,action))
         if action == self.n * self.n:
             return (board, -player)
-        b = Board(self.n)
-        b.pieces = np.copy(board)
+        b = board.copy()
         move = (int(action / self.n), action % self.n)
         b.execute_move(move, player)
-        return (b.pieces, -player)
+        # display(b)
+
+        return (b, -player)
 
     # modified
     def getValidMoves(self, board, player):
         # return a fixed size binary vector
-        valids = [0] * self.getActionSize()
-        b = Board(self.n)
-        b.pieces = np.copy(board)
+        valids = [0 for i in range(self.getActionSize())]
+        b = board.copy()
         legalMoves = b.get_legal_moves(player)
+        # display(board)
+        # print("legal moves{}".format(legalMoves))
         if len(legalMoves) == 0:
             valids[-1] = 1
             return np.array(valids)
         for x, y in legalMoves:
             valids[self.n * x + y] = 1
+        # b.pieces = np.array(valids)
+        # print("valid moves:{}".format(valids))
         return np.array(valids)
 
     # modified
@@ -53,13 +58,12 @@ class GoGame(Game):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
         winner = 0
-
         if len(board.history) > 1:
             if board.history[-1] is None and board.history[-2] is None\
                     and player == -1:
-                score_white = np.sum(board == -1)
-                score_black = np.sum(board == 1)
-                empties = zip(*np.where(board == 0))
+                score_white = np.sum(board.pieces == -1)
+                score_black = np.sum(board.pieces == 1)
+                empties = zip(*np.where(board.pieces == 0))
                 for empty in empties:
                     # Check that all surrounding points are of one color
                     if board.is_eyeish(empty, 1):
@@ -80,7 +84,12 @@ class GoGame(Game):
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-        return player * board
+        cur_pieces = board.pieces
+        b_pieces = cur_pieces * player
+        board.pieces = b_pieces
+        print('getting canon:')
+        print(b_pieces)
+        return board
 
     # modified
     def getSymmetries(self, board, pi):
@@ -88,10 +97,10 @@ class GoGame(Game):
         assert(len(pi) == self.n**2 + 1)  # 1 for pass
         pi_board = np.reshape(pi[:-1], (self.n, self.n))
         l = []
-
+        b_pieces = board.pieces
         for i in range(1, 5):
             for j in [True, False]:
-                newB = np.rot90(board, i)
+                newB = np.rot90(b_pieces, i)
                 newPi = np.rot90(pi_board, i)
                 if j:
                     newB = np.fliplr(newB)
@@ -101,11 +110,13 @@ class GoGame(Game):
 
     def stringRepresentation(self, board):
         # 8x8 numpy array (canonical board)
-        return board.tostring()
+        return np.array(board.pieces).tostring()
 
 
 def display(board):
-    n = board.shape[0]
+    b_pieces = np.array(board.pieces)
+
+    n = b_pieces.shape[0]
 
     for y in range(n):
         print(y, "|", end="")
@@ -114,7 +125,7 @@ def display(board):
     for y in range(n):
         print(y, "|", end="")    # print the row #
         for x in range(n):
-            piece = board[y][x]    # get the piece to print
+            piece = b_pieces[y][x]    # get the piece to print
             if piece == -1:
                 print("b ", end="")
             elif piece == 1:
