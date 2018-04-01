@@ -26,14 +26,15 @@ class GoGame(Game):
     def getNextState(self, board, player, action):
         # if player takes action on board, return next (board,player)
         # action must be a valid move
-        print("getting next state from perspect of player {} with action {}".format(player,action))
+        # print("getting next state from perspect of player {} with action {}".format(player,action))
         if action == self.n * self.n:
             return (board, -player)
         b = board.copy()
         move = (int(action / self.n), action % self.n)
-        b.execute_move(move, player)
         # display(b)
-
+        # print(player,move)
+        b.execute_move(move,player )
+        # display(b)
         return (b, -player)
 
     # modified
@@ -49,8 +50,8 @@ class GoGame(Game):
             return np.array(valids)
         for x, y in legalMoves:
             valids[self.n * x + y] = 1
-        # b.pieces = np.array(valids)
-        # print("valid moves:{}".format(valids))
+        # display(board)
+        # print(legalMoves)
         return np.array(valids)
 
     # modified
@@ -84,11 +85,11 @@ class GoGame(Game):
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
-        cur_pieces = board.pieces
+        cur_pieces = board.pieces.copy()
         b_pieces = cur_pieces * player
         board.pieces = b_pieces
-        print('getting canon:')
-        print(b_pieces)
+        # print('getting canon:')
+        # print(b_pieces)
         return board
 
     # modified
@@ -126,9 +127,9 @@ def display(board):
         print(y, "|", end="")    # print the row #
         for x in range(n):
             piece = b_pieces[y][x]    # get the piece to print
-            if piece == -1:
+            if piece == 1:
                 print("b ", end="")
-            elif piece == 1:
+            elif piece == -1:
                 print("W ", end="")
             else:
                 if x == n:

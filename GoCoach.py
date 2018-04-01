@@ -42,36 +42,25 @@ class Coach():
         board = self.game.getInitBoard()
         self.curPlayer = 1
         episodeStep = 0
-        # print('inside another epsidode')
-
         while True:
 
             episodeStep += 1
-            # print("Current Episode:{}".format(episodeStep))
-
-            # display(board)
+            print("================{}=====CURPLAYER:{}==========".format(episodeStep,"W" if self.curPlayer==-1 else "b"))
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
             temp = int(episodeStep < self.args.tempThreshold)
-            # print(temp)
 
-            print("Player {} is thinking of...".format(self.curPlayer))
-            print(canonicalBoard.pieces)
             pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
+            print("CANON:")
+            display(canonicalBoard)
 
-            # print("current Pi:{}".format(pi))
             sym = self.game.getSymmetries(canonicalBoard, pi)
             for b,p in sym:
                 trainExamples.append([b, self.curPlayer, p, None])
-
             action = np.random.choice(len(pi), p=pi)
-
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
-            print("action taken, now the board looks:...")
+            print("BOARD updated:")
             display(board)
-            print(board.pieces)
-            print("player shift, current player :{}".format(self.curPlayer))
             r = self.game.getGameEnded(board, self.curPlayer)
-
             if r!=0:
                 return [(x[0],x[2],r*((-1)**(x[1]!=self.curPlayer))) for x in trainExamples]
 

@@ -496,7 +496,7 @@ class Board():
                 self._update_hash(action, color)
                 self._update_neighbors(action, color)
                 self.stone_ages[x][y] = 0
-                print("player {} act {} --:".format(color,action))
+                # print("player {} act {} --:".format(color,action))
 
                 # check neighboring groups' liberties for captures
                 for (nx, ny) in self._neighbors(action):
@@ -526,6 +526,7 @@ class Board():
                     self.passes_black += 1
                 if color == WHITE:
                     self.passes_white += 1
+            self.history.append(action)
         else:
             raise IllegalMove(str(action)+','+str(color))
 

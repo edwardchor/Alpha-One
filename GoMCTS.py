@@ -28,29 +28,26 @@ class MCTS():
             probs: a policy vector where the probability of the ith action is
                    proportional to Nsa[(s,a)]**(1./temp)
         """
+
         # display(canonicalBoard)
         for i in range(self.args.numMCTSSims):
-            # print("MCTSSIM____{}".format(i))
-            # display(canonicalBoard)
+
             self.search(canonicalBoard)
-        # print(self.Ns)
-        # print(self.Nsa)
-        # display(canonicalBoard)
+
         s = self.game.stringRepresentation(canonicalBoard)
         counts = np.array([self.Nsa[(s,a)] if (s,a) in self.Nsa else 0 for a in range(self.game.getActionSize())])
         counts*=self.game.getValidMoves(canonicalBoard,player=1)
-        # print(counts)
+
         if temp==0:
             bestA = np.argmax(counts)
             probs = [0]*len(counts)
             probs[bestA]=1
-            # print(probs)
             return probs
 
         counts = [x**(1./temp) for x in counts]
         probs = [x/float(sum(counts)) for x in counts]
 
-        # print(probs)
+
         return probs
 
 
@@ -78,12 +75,12 @@ class MCTS():
 
         s = self.game.stringRepresentation(canonicalBoard)
 
-        # time.sleep(50)
+
         if s not in self.Es.keys():
             self.Es[s] = self.game.getGameEnded(canonicalBoard, 1)
 
         if self.Es[s]!=0:
-            # print("terminal node")
+
             return -self.Es[s]
 
         if s not in self.Ps.keys():
@@ -126,10 +123,10 @@ class MCTS():
 
         a = best_act
 
-        print("in MCTS.search, need next search, shifting player from 1")
+        # print("in MCTS.search, need next search, shifting player from 1")
         next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
-        print("in MCTS.search, need next search, next player is {}".format(next_player))
-        # next_s = self.game.getCanonicalForm(next_s, next_player)
+        # print("in MCTS.search, need next search, next player is {}".format(next_player))
+        next_s = self.game.getCanonicalForm(next_s, next_player)
 
         v = self.search(next_s)
 
