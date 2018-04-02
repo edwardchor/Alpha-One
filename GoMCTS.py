@@ -35,20 +35,74 @@ class MCTS():
             self.search(canonicalBoard)
 
         s = self.game.stringRepresentation(canonicalBoard)
+
         counts = np.array([self.Nsa[(s,a)] if (s,a) in self.Nsa else 0 for a in range(self.game.getActionSize())])
-        counts*=self.game.getValidMoves(canonicalBoard,player=1)
+        valids=self.game.getValidMoves(canonicalBoard,player=1)
+        if np.sum(counts)==0:
+            counts=valids
+        else:
+            counts*=valids
+
 
         if temp==0:
             bestA = np.argmax(counts)
-            probs = [0]*len(counts)
+
+            try:
+                assert(valids[bestA]!=0)
+            except:
+                print("temp=0, assert valids[bestA]!=0 !!!")
+                print("current valids:",valids)
+                flag_Qsa=False
+                flag_Nsa=False
+                if s in self.Ps:
+                    print("s in p! Which measn it's been visited, has the probability of each action",self.Ps[s])
+                for _ in range(self.game.getActionSize()):
+                    if (s,_) in self.Nsa:
+                        print(_,"in Nsa! which measn its value is calculated to ",self.Nsa[(s,_)])
+                    else:
+                        flag_Nsa=True
+                        print(_,"no Nsa value, set 0 by default in counts=[...]!")
+
+                    if (s,_) in self.Qsa:
+                        print(_,"in! Qsa with value:",self.Qsa[(s,_)])
+                    else:
+                        flag_Qsa=True
+                        print(_,"no Qsa value")
+
+                    if flag_Nsa and flag_Qsa:
+                        print("no nsa, no qsa")
+                    if flag_Nsa and not flag_Qsa:
+                        print("no nsa, has qsa")
+                    if not flag_Nsa and flag_Qsa:
+                        print("has nsa, no qsa")
+
+
+
+
+
+
+
+
+
+                print(counts)
+
+            probs = [0 for i in range(len(counts))]
             probs[bestA]=1
+
+            for _ in range(self.game.getActionSize()):
+                if probs[_]>0:
+                    assert(valids[_]>0)
+
             return probs
 
         counts = [x**(1./temp) for x in counts]
         probs = [x/float(sum(counts)) for x in counts]
 
+        for _ in range(self.game.getActionSize()):
+            if probs[_]>0:
+                assert(valids[_]>0)
 
-        return probs
+        return probs*valids
 
 
     def search(self, canonicalBoard):
@@ -73,17 +127,13 @@ class MCTS():
         # print("doing mcts on board:")
         # display(canonicalBoard)
 
+
+        gameEnd=self.game.getGameEnded(canonicalBoard, 1)
+        if gameEnd!=0:
+            return -gameEnd
         s = self.game.stringRepresentation(canonicalBoard)
 
-
-        if s not in self.Es.keys():
-            self.Es[s] = self.game.getGameEnded(canonicalBoard, 1)
-
-        if self.Es[s]!=0:
-
-            return -self.Es[s]
-
-        if s not in self.Ps.keys():
+        if s not in self.Ps:
             # print("leaf node")
             self.Ps[s], v = self.nnet.predict(canonicalBoard.pieces)
 
@@ -111,7 +161,7 @@ class MCTS():
 
         # pick the action with the highest upper confidence bound
         for a in range(self.game.getActionSize()):
-            if valids[a]:
+            if valids[a]!=0:
                 if (s,a) in self.Qsa:
                     u = self.Qsa[(s,a)] + self.args.cpuct*self.Ps[s][a]*math.sqrt(self.Ns[s])/(1+self.Nsa[(s,a)])
                 else:
@@ -122,21 +172,32 @@ class MCTS():
                     best_act = a
 
         a = best_act
+        assert(valids[a]!=0)
         # print("in MCTS.search, need next search, shifting player from 1")
-        next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
-        # print("in MCTS.search, need next search, next player is {}".format(next_player))
-        next_s = self.game.getCanonicalForm(next_s, next_player)
 
-        v = self.search(next_s)
+        try:
+            next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
 
-        if (s,a) in self.Qsa:
-            self.Qsa[(s,a)] = (self.Nsa[(s,a)]*self.Qsa[(s,a)] + v)/(self.Nsa[(s,a)]+1)
-            self.Nsa[(s,a)] += 1
+            # print("in MCTS.search, need next search, next player is {}".format(next_player))
+            next_s = self.game.getCanonicalForm(next_s, next_player)
 
-        else:
-            self.Qsa[(s,a)] = v
-            self.Nsa[(s,a)] = 1
+            v = self.search(next_s)
 
-        self.Ns[s] += 1
+            if (s,a) in self.Qsa:
+                assert(valids[a]!=0)
+                self.Qsa[(s,a)] = (self.Nsa[(s,a)]*self.Qsa[(s,a)] + v)/(self.Nsa[(s,a)]+1)
+                self.Nsa[(s,a)] += 1
 
-        return -v
+            else:
+                self.Qsa[(s,a)] = v
+                self.Nsa[(s,a)] = 1
+
+            self.Ns[s] += 1
+
+            return -v
+        except:
+            print("###############在search内部节点出现错误：###########")
+            display(canonicalBoard)
+            print("action:{},valids:{},Vs:{}".format(a,valids,self.Vs[s]))
+            print("abort research forward")
+

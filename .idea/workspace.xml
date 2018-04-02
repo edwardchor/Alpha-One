@@ -2,9 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="183772c3-9887-4f1f-9aec-b5a79986c94b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/GoCoach.py" afterPath="$PROJECT_DIR$/GoCoach.py" />
       <change beforePath="$PROJECT_DIR$/GoMCTS.py" afterPath="$PROJECT_DIR$/GoMCTS.py" />
       <change beforePath="$PROJECT_DIR$/go/GoGame.py" afterPath="$PROJECT_DIR$/go/GoGame.py" />
+      <change beforePath="$PROJECT_DIR$/go/GoLogic.py" afterPath="$PROJECT_DIR$/go/GoLogic.py" />
+      <change beforePath="$PROJECT_DIR$/temp/best.pth.tar" afterPath="$PROJECT_DIR$/temp/best.pth.tar" />
+      <change beforePath="$PROJECT_DIR$/temp/checkpoint_0.pth.tar.examples" afterPath="$PROJECT_DIR$/temp/checkpoint_0.pth.tar.examples" />
+      <change beforePath="$PROJECT_DIR$/temp/checkpoint_1.pth.tar" afterPath="$PROJECT_DIR$/temp/checkpoint_1.pth.tar" />
+      <change beforePath="$PROJECT_DIR$/temp/checkpoint_1.pth.tar.examples" afterPath="$PROJECT_DIR$/temp/checkpoint_1.pth.tar.examples" />
+      <change beforePath="$PROJECT_DIR$/temp/temp.pth.tar" afterPath="$PROJECT_DIR$/temp/temp.pth.tar" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,8 +37,8 @@
       <file leaf-file-name="GoCoach.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GoCoach.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="47" column="48" lean-forward="false" selection-start-line="47" selection-start-column="48" selection-end-line="47" selection-end-column="48" />
+            <state relative-caret-position="607">
+              <caret line="57" column="47" lean-forward="false" selection-start-line="57" selection-start-column="47" selection-end-line="57" selection-end-column="47" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -39,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GoMCTS.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GoMCTS.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GoMCTS.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="79" column="44" lean-forward="true" selection-start-line="79" selection-start-column="44" selection-end-line="79" selection-end-column="44" />
+            <state relative-caret-position="334">
+              <caret line="196" column="21" lean-forward="true" selection-start-line="196" selection-start-column="21" selection-end-line="196" selection-end-column="21" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -51,11 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GoGame.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GoGame.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/go/GoGame.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="117" column="53" lean-forward="false" selection-start-line="117" selection-start-column="53" selection-end-line="117" selection-end-column="53" />
+            <state relative-caret-position="-404">
+              <caret line="25" column="8" lean-forward="false" selection-start-line="25" selection-start-column="8" selection-end-line="25" selection-end-column="8" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -66,8 +73,8 @@
       <file leaf-file-name="GoLogic.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/go/GoLogic.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1770">
-              <caret line="263" column="0" lean-forward="true" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
+            <state relative-caret-position="-3">
+              <caret line="2" column="3" lean-forward="false" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -120,6 +127,11 @@
       <find>legal</find>
       <find>execute</find>
       <find>getNextState</find>
+      <find>self.Nsa</find>
+      <find>.keys</find>
+      <find>self.Es</find>
+      <find>search</find>
+      <find>train</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -138,10 +150,10 @@
         <option value="$PROJECT_DIR$/MCTS.py" />
         <option value="$PROJECT_DIR$/GoMain.py" />
         <option value="$PROJECT_DIR$/go/pytorch/NNet.py" />
-        <option value="$PROJECT_DIR$/go/GoLogic.py" />
-        <option value="$PROJECT_DIR$/GoMCTS.py" />
-        <option value="$PROJECT_DIR$/GoCoach.py" />
         <option value="$PROJECT_DIR$/go/GoGame.py" />
+        <option value="$PROJECT_DIR$/go/GoLogic.py" />
+        <option value="$PROJECT_DIR$/GoCoach.py" />
+        <option value="$PROJECT_DIR$/GoMCTS.py" />
       </list>
     </option>
   </component>
@@ -337,7 +349,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12374934" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32947975" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08477842" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44508672" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -363,14 +375,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Coach.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="27" column="39" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/GoMain.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -691,16 +695,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GoMain.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MCTS.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="550">
@@ -716,18 +710,46 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/go/GoGame.py.b">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1536">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GoMain.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/go/GoLogic.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1770">
-          <caret line="263" column="0" lean-forward="true" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
+        <state relative-caret-position="-3">
+          <caret line="2" column="3" lean-forward="false" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/go/GoGame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-404">
+          <caret line="25" column="8" lean-forward="false" selection-start-line="25" selection-start-column="8" selection-end-line="25" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/GoCoach.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="47" column="48" lean-forward="false" selection-start-line="47" selection-start-column="48" selection-end-line="47" selection-end-column="48" />
+        <state relative-caret-position="607">
+          <caret line="57" column="47" lean-forward="false" selection-start-line="57" selection-start-column="47" selection-end-line="57" selection-end-column="47" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
@@ -736,20 +758,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GoMCTS.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="79" column="44" lean-forward="true" selection-start-line="79" selection-start-column="44" selection-end-line="79" selection-end-column="44" />
+        <state relative-caret-position="334">
+          <caret line="196" column="21" lean-forward="true" selection-start-line="196" selection-start-column="21" selection-end-line="196" selection-end-column="21" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/go/GoGame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="117" column="53" lean-forward="false" selection-start-line="117" selection-start-column="53" selection-end-line="117" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>

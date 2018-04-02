@@ -35,7 +35,7 @@ class GoGame(Game):
         move = (int(action / self.n), action % self.n)
         # display(b)
         # print(player,move)
-        b.execute_move(move,player )
+        b.execute_move(move,player)
         # display(b)
         return (b, -player)
 
@@ -62,21 +62,20 @@ class GoGame(Game):
         # player = 1
 
         winner = 0
+        (score_black, score_white) = self.getScore(board)
+        by_score = 0.5 * (board.n*board.n + board.komi)
+
         if len(board.history) > 1:
-            if board.history[-1] is None and board.history[-2] is None\
-                    and player == -1:
-                score_white = np.sum(board.pieces == -1)
-                score_black = np.sum(board.pieces == 1)
-                empties = zip(*np.where(board.pieces == 0))
-                for empty in empties:
-                    # Check that all surrounding points are of one color
-                    if board.is_eyeish(empty, 1):
-                        score_black += 1
-                    elif board.is_eyeish(empty, -1):
-                        score_white += 1
-                score_white += board.komi
-                score_white -= board.passes_white
-                score_black -= board.passes_black
+            if (board.history[-1] is None and board.history[-2] is None\
+                    and player == -1):
+                if score_black > score_white:
+                    winner = 1
+                elif score_white > score_black:
+                    winner = -1
+                else:
+                    # Tie
+                    winner = 1e-4
+            elif score_black > by_score or score_white > by_score:
                 if score_black > score_white:
                     winner = 1
                 elif score_white > score_black:
@@ -85,6 +84,21 @@ class GoGame(Game):
                     # Tie
                     winner = 1e-4
         return winner
+
+    def getScore(self, board):
+        score_white = np.sum(board.pieces == -1)
+        score_black = np.sum(board.pieces == 1)
+        empties = zip(*np.where(board.pieces == 0))
+        for empty in empties:
+            # Check that all surrounding points are of one color
+            if board.is_eyeish(empty, 1):
+                score_black += 1
+            elif board.is_eyeish(empty, -1):
+                score_white += 1
+        score_white += board.komi
+        score_white -= board.passes_white
+        score_black -= board.passes_black
+        return (score_black, score_white)
 
     def getCanonicalForm(self, board, player):
         # return state if player==1, else return -state if player==-1
@@ -115,7 +129,7 @@ class GoGame(Game):
 
     def stringRepresentation(self, board):
         # 8x8 numpy array (canonical board)
-        return np.array2string(np.array(board.pieces))
+        return np.array(board.pieces).tostring()
 
 
 def display(board):

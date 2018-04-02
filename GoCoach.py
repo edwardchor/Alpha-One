@@ -45,11 +45,11 @@ class Coach():
         while True:
 
             episodeStep += 1
-            print("================Episode step:{}=====CURPLAYER:{}==========".format(episodeStep,"W" if self.curPlayer==-1 else "b"))
+            # print("================Episode step:{}=====CURPLAYER:{}==========".format(episodeStep,"W" if self.curPlayer==-1 else "b"))
             canonicalBoard = self.game.getCanonicalForm(board,self.curPlayer)
             temp = int(episodeStep < self.args.tempThreshold)
-            print("CANON:")
-            display(canonicalBoard)
+            # print("CANON:")
+            # display(canonicalBoard)
 
             pi = self.mcts.getActionProb(canonicalBoard, temp=temp)
 
@@ -57,11 +57,11 @@ class Coach():
             for b,p in sym:
                 trainExamples.append([b, self.curPlayer, p, None])
             action = np.random.choice(len(pi), p=pi)
-            print("BOARD Before:")
-            display(board)
+            # print("BOARD Before:")
+            # display(board)
             board, self.curPlayer = self.game.getNextState(board, self.curPlayer, action)
-            print("BOARD updated:")
-            display(board)
+            # print("BOARD updated:")
+            # display(board)
             r = self.game.getGameEnded(board.copy(), self.curPlayer)
             if r!=0:
                 return [(x[0],x[2],r*((-1)**(x[1]!=self.curPlayer))) for x in trainExamples]
@@ -77,7 +77,7 @@ class Coach():
 
         for i in range(1, self.args.numIters+1):
             # bookkeeping
-            print('------ITER ' + str(i) + '------')
+            print('###########################ITER:{}###########################'.format(str(i)))
             # examples of the iteration
             if not self.skipFirstSelfPlay or i>1:
                 iterationTrainExamples = deque([], maxlen=self.args.maxlenOfQueue)
@@ -86,7 +86,7 @@ class Coach():
                 end = time.time()
 
                 for eps in range(self.args.numEps):
-                    print("{}th Episode:".format(eps+1))
+                    # print("{}th Episode:".format(eps+1))
                     self.mcts = MCTS(self.game, self.nnet, self.args)   # reset search tree
                     iterationTrainExamples += self.executeEpisode()
 
