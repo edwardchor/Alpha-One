@@ -199,5 +199,7 @@ class MCTS():
             print("###############在search内部节点出现错误：###########")
             display(canonicalBoard)
             print("action:{},valids:{},Vs:{}".format(a,valids,self.Vs[s]))
+            new_valids=self.game.getValidMoves(canonicalBoard,1)
+            print("recalculate the valids vector:{} ".format(new_valids))
             print("abort research forward")
 
