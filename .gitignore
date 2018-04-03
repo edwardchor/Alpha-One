@@ -1,11 +1,12 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+sbath*
 slurm*
 *.py[cod]
 *$py.class
 # C extensions
 *.so
-
+temp/
 # Distribution / packaging
 .Python
 env/
