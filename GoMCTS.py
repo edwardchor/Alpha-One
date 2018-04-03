@@ -162,7 +162,7 @@ class MCTS():
         # pick the action with the highest upper confidence bound
         for a in range(self.game.getActionSize()):
             if valids[a]!=0:
-                if (s,a) in self.Qsa:
+                if (s,a) in self.Qsa and self.Qsa[(s,a)]!=None:
                     u = self.Qsa[(s,a)] + self.args.cpuct*self.Ps[s][a]*math.sqrt(self.Ns[s])/(1+self.Nsa[(s,a)])
                 else:
                     u = self.args.cpuct*self.Ps[s][a]*math.sqrt(self.Ns[s])     # Q = 0 ?
@@ -179,27 +179,48 @@ class MCTS():
             next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
 
             # print("in MCTS.search, need next search, next player is {}".format(next_player))
-            next_s = self.game.getCanonicalForm(next_s, next_player)
-
-            v = self.search(next_s)
-
-            if (s,a) in self.Qsa:
-                assert(valids[a]!=0)
-                self.Qsa[(s,a)] = (self.Nsa[(s,a)]*self.Qsa[(s,a)] + v)/(self.Nsa[(s,a)]+1)
-                self.Nsa[(s,a)] += 1
-
-            else:
-                self.Qsa[(s,a)] = v
-                self.Nsa[(s,a)] = 1
-
-            self.Ns[s] += 1
-
-            return -v
         except:
             print("###############在search内部节点出现错误：###########")
-            display(canonicalBoard)
+            #display(canonicalBoard)
             print("action:{},valids:{},Vs:{}".format(a,valids,self.Vs[s]))
-            new_valids=self.game.getValidMoves(canonicalBoard,1)
-            print("recalculate the valids vector:{} ".format(new_valids))
-            print("abort research forward")
+            valids=self.game.getValidMoves(canonicalBoard,1)
+            self.Vs[s]=valids
+            cur_best = -float('inf')
+            best_act = -1
+
+            # pick the action with the highest upper confidence bound
+            for a in range(self.game.getActionSize()):
+                if valids[a]!=0:
+                    if (s,a) in self.Qsa and self.Qsa[(s,a)]!=None:
+                        u = self.Qsa[(s,a)] + self.args.cpuct*self.Ps[s][a]*math.sqrt(self.Ns[s])/(1+self.Nsa[(s,a)])
+                    else:
+                        u = self.args.cpuct*self.Ps[s][a]*math.sqrt(self.Ns[s])     # Q = 0 ?
+
+                    if u > cur_best:
+                        cur_best = u
+                        best_act = a
+
+            a = best_act
+            print("recalculate the valids vector:{} ".format(valids))
+            try:
+                next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
+            except:
+                return -1
+
+        next_s = self.game.getCanonicalForm(next_s, next_player)
+
+        v = self.search(next_s)
+
+        if (s,a) in self.Qsa:
+            assert(valids[a]!=0)
+            self.Qsa[(s,a)] = (self.Nsa[(s,a)]*self.Qsa[(s,a)] + v)/(self.Nsa[(s,a)]+1)
+            self.Nsa[(s,a)] += 1
+
+        else:
+            self.Qsa[(s,a)] = v
+            self.Nsa[(s,a)] = 1
+
+        self.Ns[s] += 1
+
+        return -v
 
