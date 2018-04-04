@@ -69,17 +69,17 @@ class GoGame(Game):
             if (board.history[-1] is None and board.history[-2] is None\
                     and player == -1):
                 if score_black > score_white:
-                    winner = 1
-                elif score_white > score_black:
                     winner = -1
+                elif score_white > score_black:
+                    winner = 1
                 else:
                     # Tie
                     winner = 1e-4
             elif score_black > by_score or score_white > by_score:
                 if score_black > score_white:
-                    winner = 1
-                elif score_white > score_black:
                     winner = -1
+                elif score_white > score_black:
+                    winner = 1
                 else:
                     # Tie
                     winner = 1e-4
