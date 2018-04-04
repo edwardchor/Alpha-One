@@ -180,9 +180,9 @@ class MCTS():
 
             # print("in MCTS.search, need next search, next player is {}".format(next_player))
         except:
-            print("###############在search内部节点出现错误：###########")
+            # print("###############在search内部节点出现错误：###########")
             #display(canonicalBoard)
-            print("action:{},valids:{},Vs:{}".format(a,valids,self.Vs[s]))
+            # print("action:{},valids:{},Vs:{}".format(a,valids,self.Vs[s]))
             valids=self.game.getValidMoves(canonicalBoard,1)
             self.Vs[s]=valids
             cur_best = -float('inf')
@@ -201,11 +201,11 @@ class MCTS():
                         best_act = a
 
             a = best_act
-            print("recalculate the valids vector:{} ".format(valids))
+            # print("recalculate the valids vector:{} ".format(valids))
             try:
                 next_s, next_player = self.game.getNextState(canonicalBoard, 1, a)
             except:
-                return -1
+                return
 
         next_s = self.game.getCanonicalForm(next_s, next_player)
 
