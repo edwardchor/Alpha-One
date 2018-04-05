@@ -16,12 +16,12 @@ args = dotdict({
     'checkpoint': './temp/',
     'load_model': False,
     'load_folder_file': ('/dev/models/8x100x50','best.pth.tar'),
-    'numItersForTrainExamplesHistory': 20,
+    'numItersForTrainExamplesHistory': 25,
 
 })
 
 if __name__=="__main__":
-    g = Game(6)
+    g = Game(11)
     nnet = nn(g)
 
     if args.load_model:
