@@ -13,5 +13,4 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=zc1213@nyu.edu
    
-#SBATCH --output=slurm.out
 python -u GoMain.py 
