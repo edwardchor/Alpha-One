@@ -22,7 +22,7 @@ from torch.autograd import Variable
 from .GoNNet import OthelloNNet as onnet
 
 from .GoAlphaNet import AlphaNet as alpNet
-
+from .GoAlphaNet import AlphaNetMaker as NetMaker
 args = dotdict({
     'lr': 0.001,
     'dropout': 0.3,
@@ -35,7 +35,8 @@ args = dotdict({
 class NNetWrapper(NeuralNet):
     def __init__(self, game):
         # self.nnet = onnet(game, args)
-        self.nnet=alpNet(game,args)
+        netMkr=NetMaker(game,args)
+        self.nnet=netMkr.makeNet()
         self.board_x, self.board_y = game.getBoardSize()
         self.action_size = game.getActionSize()
 

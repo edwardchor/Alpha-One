@@ -12,8 +12,7 @@ from torchvision.models.resnet import ResNet
 from torchvision.models.resnet import BasicBlock
 from torchvision.models.resnet import Bottleneck
 
-__all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
-           'resnet152']
+__all__ = ['ResNet']
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -104,13 +103,12 @@ class AlphaBlock(nn.Module):
 
 
 class AlphaNet(ResNet):
-    def __init__(self, game,args):
+    def __init__(self, game,args,layers):
         block=AlphaBlock
-        layers=[2,2,2,2]
         self.board_x, self.board_y = game.getBoardSize()
         self.action_size = game.getActionSize()
         self.args = args
-        outputShift=1
+        outputShift=1 if self.board_x in [6,11] else 4
         self.inplanes = 64
 
         super(ResNet, self).__init__()
@@ -125,7 +123,7 @@ class AlphaNet(ResNet):
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        self.avgpool = nn.AvgPool2d(5, stride=1)
+        self.avgpool = nn.AvgPool2d(2, stride=1)
         self.fc_p= nn.Linear(512 * block.expansion*outputShift,self.action_size)
         self.fc_v=nn.Linear(512* block.expansion*outputShift,1)
 
@@ -180,7 +178,10 @@ class AlphaNet(ResNet):
         x = self.layer4(x)
         # print("layer4 output:{}".format(x.shape))
 
-        # x = self.avgpool(x)
+        try:
+            x = self.avgpool(x)
+        except:
+            pass
         # print("avgpool output:{}".format(x.shape))
         x = x.view(x.size(0), -1)
         p = self.fc_p(x)
@@ -188,3 +189,39 @@ class AlphaNet(ResNet):
         v = self.fc_v(x)
         # print("v output:{}".format(p.shape))
         return F.log_softmax(p,dim=1),F.tanh(v)
+
+class AlphaNetMaker:
+    def __init__(self,game,args):
+        self.n,self.n=game.getBoardSize()
+        self.game=game
+        self.args=args
+    def makeNet(self):
+        if self.n<=11:
+            print("[LOG]:Input board size is {}*{}, using ResNet-{}.".format(self.n,self.n,18))
+            return self.resnet18(self.game,self.args)
+        else:
+            print("[LOG]:Input board size is {}*{}, using ResNet-{}.".format(self.n,self.n,34))
+            return self.resnet34(self.game,self.args)
+
+    def resnet18(self,game,args,pretrained=False):
+        """Constructs a ResNet-18 model.
+
+        Args:
+            pretrained (bool): If True, returns a model pre-trained on ImageNet
+        """
+        model = AlphaNet(game,args, [2, 2, 2, 2])
+        if pretrained:
+            model.load_state_dict(model_zoo.load_url(model_urls['resnet18']))
+        return model
+
+
+    def resnet34(self,game,args,pretrained=False, **kwargs):
+        """Constructs a ResNet-34 model.
+
+        Args:
+            pretrained (bool): If True, returns a model pre-trained on ImageNet
+        """
+        model = AlphaNet(game,args, [3, 4, 6, 3])
+        if pretrained:
+            model.load_state_dict(model_zoo.load_url(model_urls['resnet34']))
+        return model
