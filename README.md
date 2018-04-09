@@ -14,4 +14,5 @@ There are two major targets consist- ing of establishing rules for the Game Go a
 
 ### Contributors and Credits
 * Fork from https://github.com/suragnair/alpha-zero-general
+* Used two repositories(https://github.com/ambbber/alpha-zero-go) at first, then edwardchor loaded and merged all code into his repository.
 
